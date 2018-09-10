@@ -42,22 +42,24 @@ def action_wrapper(hermes, intentMessage, conf):
 
 	if(networkType == "wan"):
 		ip = check_output(["/usr/bin/curl","-s","https://api.ipify.org"])
+		networkType = "Wan"
 	else:
 		try:
 			ip = ni.ifaddresses('wlan0')[ni.AF_INET][0]['addr']
-			networkType = "wlan"
+			networkType = "W-Lan"
 		except ValueError:
 			try:
 				ip = ni.ifaddresses('eth0')[ni.AF_INET][0]['addr']
-				networkType = "lan"
+				networkType = "Lan"
 			except ValueError:
 				try:
 					ip = ni.ifaddresses('wlan1')[ni.AF_INET][0]['addr']
-					networkType = "wlan"
+					networkType = "W-Lan"
 				except ValueError:
 					err_code = 1
 	if err_code == 0:
-		result_sentence = "Die {}-Adresse von diesem Gerät lautet {} .".format(networkType, ip)
+		ip_out = ip.split(".")
+		result_sentence = "Die {} Adresse von diesem Gerät lautet {} Punkt {} Punkt {} Punkt {} .".format(networkType, ip_out[0], ip_out[1], ip_out[2], ip_out[3])
 	else:
 		result_sentence = "Das Gerät ist gerade nicht mit einem Netzwerk verbunden."
 	current_session_id = intentMessage.session_id
