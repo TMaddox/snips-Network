@@ -29,17 +29,17 @@ def subscribe_intent_callback(hermes, intentMessage):
 
 
 def action_wrapper(hermes, intentMessage, conf):
-    import netifaces as ni
-    from subprocess import check_output
-	
+	import netifaces as ni
+	from subprocess import check_output
+
 	if len(intentMessage.slots.networkType) > 0:
 		networkType = intentMessage.slots.networkType.first().value
 	else:
 		networkType = "lan"
-		
-    ip = ""
-    err_code = 0
-	
+
+	ip = ""
+	err_code = 0
+
 	if(networkType == "wan"):
 		ip = check_output(["/usr/bin/curl","-s","https://api.ipify.org"])
 	else:
@@ -56,12 +56,12 @@ def action_wrapper(hermes, intentMessage, conf):
 					networkType = "wlan"
 				except ValueError:
 					err_code = 1
-    if err_code == 0:
-        result_sentence = "Die {}-Adresse von diesem Gerät lautet {} .".format(networkType, ip)
-    else:
-        result_sentence = "Das Gerät ist gerade nicht mit einem Netzwerk verbunden."
-    current_session_id = intentMessage.session_id
-    hermes.publish_end_session(current_session_id, result_sentence)
+	if err_code == 0:
+		result_sentence = "Die {}-Adresse von diesem Gerät lautet {} .".format(networkType, ip)
+	else:
+		result_sentence = "Das Gerät ist gerade nicht mit einem Netzwerk verbunden."
+	current_session_id = intentMessage.session_id
+	hermes.publish_end_session(current_session_id, result_sentence)
     
 
 
