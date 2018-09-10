@@ -31,23 +31,33 @@ def subscribe_intent_callback(hermes, intentMessage):
 def action_wrapper(hermes, intentMessage, conf):
     import netifaces as ni
     from subprocess import check_output
-    ip_addr = ""
+	
+	if len(intentMessage.slots.networkType) > 0:
+		networkType = intentMessage.slots.networkType.first().value
+	else:
+		networkType = "lan"
+		
+    ip = ""
     err_code = 0
-    try:
-        ip_addr = ni.ifaddresses('wlan0')[ni.AF_INET][0]['addr']
-    except ValueError:
-        try:
-            ip_addr = ni.ifaddresses('eth0')[ni.AF_INET][0]['addr']
-        except ValueError:
-            try:
-                ip_addr = ni.ifaddresses('wlan1')[ni.AF_INET][0]['addr']
-            except ValueError:
-                err_code = 1
-    ip_addr = check_output(["/usr/bin/curl","-s","https://api.ipify.org"])
+	
+	if(networkType == "wan"):
+		ip = check_output(["/usr/bin/curl","-s","https://api.ipify.org"])
+	else:
+		try:
+			ip = ni.ifaddresses('wlan0')[ni.AF_INET][0]['addr']
+			networkType = "wlan"
+		except ValueError:
+			try:
+				ip = ni.ifaddresses('eth0')[ni.AF_INET][0]['addr']
+				networkType = "lan"
+			except ValueError:
+				try:
+					ip = ni.ifaddresses('wlan1')[ni.AF_INET][0]['addr']
+					networkType = "wlan"
+				except ValueError:
+					err_code = 1
     if err_code == 0:
-        ip = ip_addr.split(".")
-        result_sentence = "Die IP-Adresse von diesem Gerät lautet {} Punkt {} Punkt {} Punkt {} .".format(
-        ip[0], ip[1], ip[2], ip[3])
+        result_sentence = "Die {}-Adresse von diesem Gerät lautet {} .".format(networkType, ip)
     else:
         result_sentence = "Das Gerät ist gerade nicht mit einem Netzwerk verbunden."
     current_session_id = intentMessage.session_id
