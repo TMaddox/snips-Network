@@ -29,41 +29,48 @@ def subscribe_intent_callback(hermes, intentMessage):
 
 
 def action_wrapper(hermes, intentMessage, conf):
-	import netifaces as ni
-	from subprocess import check_output
+        import netifaces as ni
+        from subprocess import check_output
 
-	if len(intentMessage.slots.networkType) > 0:
-		networkType = intentMessage.slots.networkType.first().value
-	else:
-		networkType = "lan"
+        if len(intentMessage.slots.networkType) > 0:
+                networkType = intentMessage.slots.networkType.first().value
+        else:
+                networkType = "lan"
 
-	ip = ""
-	err_code = 0
+        hostname_out = "test"
+        hostname = check_output(["/bin/hostname"])
+        if len(hostname) > 0:
+                hostname_out = hostname.strip()
 
-	if(networkType == "wan"):
-		ip = check_output(["/usr/bin/curl","-s","https://api.ipify.org"])
-		networkType = "Wan"
-	else:
-		try:
-			ip = ni.ifaddresses('wlan0')[ni.AF_INET][0]['addr']
-			networkType = "W-Lan"
-		except ValueError:
-			try:
-				ip = ni.ifaddresses('eth0')[ni.AF_INET][0]['addr']
-				networkType = "Lan"
-			except ValueError:
-				try:
-					ip = ni.ifaddresses('wlan1')[ni.AF_INET][0]['addr']
-					networkType = "W-Lan"
-				except ValueError:
-					err_code = 1
-	if err_code == 0:
-		ip_out = ip.split(".")
-		result_sentence = "Die {} Adresse von diesem Gerät lautet {} Punkt {} Punkt {} Punkt {} .".format(networkType, ip_out[0], ip_out[1], ip_out[2], ip_out[3])
-	else:
-		result_sentence = "Das Gerät ist gerade nicht mit einem Netzwerk verbunden."
-	current_session_id = intentMessage.session_id
-	hermes.publish_end_session(current_session_id, result_sentence)
+        ip = ""
+        err_code = 0
+
+        if(networkType == "wan"):
+                ip = check_output(["/usr/bin/curl","-s","https://api.ipify.org"])
+                networkType = "Wan"
+        else:
+                try:
+                        ip = ni.ifaddresses('wlan0')[ni.AF_INET][0]['addr']
+                        networkType = "W-Lan"
+                except ValueError:
+                        try:
+                                ip = ni.ifaddresses('eth0')[ni.AF_INET][0]['addr']
+                                networkType = "Lan"
+                        except ValueError:
+                                try:
+                                        ip = ni.ifaddresses('wlan1')[ni.AF_INET][0]['addr']
+                                        networkType = "W-Lan"
+                                except ValueError:
+                                        err_code = 1
+        if err_code == 0:
+                ip_out = ip.split(".")
+                result_sentence = "Schnittstelle: {} .".format(networkType)
+                result_sentence += " IP-Adresse {} Punkt {} Punkt {} Punkt {} .".format(ip_out[0], ip_out[1], ip_out[2], ip_out[3])
+                result_sentence += " Hostname: {} . ".format(hostname_out)
+        else:
+                result_sentence = "Das Gerät ist gerade nicht mit einem Netzwerk verbunden."
+        current_session_id = intentMessage.session_id
+        hermes.publish_end_session(current_session_id, result_sentence)
     
 
 
