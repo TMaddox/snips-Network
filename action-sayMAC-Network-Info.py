@@ -38,17 +38,17 @@ def action_wrapper(hermes, intentMessage, conf):
 	try:
 		ip = ni.ifaddresses('wlan0')[ni.AF_INET][0]['addr']
 		mac = ni.ifaddresses('wlan0')[ni.AF_LINK][0]['addr']
-		iface = wlan0
+		iface = "wlan0"
 	except ValueError:
 		try:
 			ip = ni.ifaddresses('eth0')[ni.AF_INET][0]['addr']
 			mac = ni.ifaddresses('eth0')[ni.AF_LINK][0]['addr']
-			iface = eth0
+			iface = "eth0"
 		except ValueError:
 			try:
 				ip = ni.ifaddresses('wlan1')[ni.AF_INET][0]['addr']
 				mac = ni.ifaddresses('wlan1')[ni.AF_LINK][0]['addr']
-				iface = wlan1
+				iface = "wlan1"
 			except ValueError:
 				err_code = 1
 	if err_code == 0:
