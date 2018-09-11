@@ -53,7 +53,7 @@ def action_wrapper(hermes, intentMessage, conf):
 				err_code = 1
 	if err_code == 0:
 		mac_out = mac.upper().split(":")
-		result_sentence = "Die mac Adresse von {} lautet {} . {} . {} . {} . {} . {} .".format(iface, mac_out[0], mac_out[1], mac_out[2], mac_out[3], mac_out[4], mac_out[5])
+		result_sentence = "Die mäck Adresse von {} lautet {} . {} . {} . {} . {} . {} .".format(iface, mac_out[0], mac_out[1], mac_out[2], mac_out[3], mac_out[4], mac_out[5])
 	else:
 		result_sentence = "Das Gerät ist gerade nicht mit einem Netzwerk verbunden."
 	current_session_id = intentMessage.session_id
