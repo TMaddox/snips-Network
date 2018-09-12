@@ -31,7 +31,7 @@ def subscribe_intent_callback(hermes, intentMessage):
 def action_wrapper(hermes, intentMessage, conf):
 	from subprocess import check_output
 
-	hostname_out = "Error."
+	hostname_out = "Error"
 	hostname = check_output(["/bin/hostname"])
 	if len(hostname) > 0:
 		hostname_out = hostname.strip()
