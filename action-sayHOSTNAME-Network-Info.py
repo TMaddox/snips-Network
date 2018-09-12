@@ -35,7 +35,6 @@ def action_wrapper(hermes, intentMessage, conf):
 	hostname = check_output(["/bin/hostname"])
 	if len(hostname) > 0:
 		hostname_out = hostname.strip()
-		ip_out = ip.split(".")
 		result_sentence = "Der Hostname ist {} . ".format(hostname_out)
 
 	current_session_id = intentMessage.session_id
