@@ -69,7 +69,7 @@ def action_wrapper(hermes, intentMessage, conf):
 				except ValueError:
 					err_code = 1
 	if err_code == 0:
-		rvname = str(dns.resolver.query(name, "PTR")[01])
+		rvname = str(dns.resolver.query(name, "PTR")[0]) if len(dns.resolver.query(name, "PTR")) else "null"
 		ip_out = ip.split(".")
 		result_sentence = "Schnittstelle: {} .".format(networkType)
 		result_sentence += " IP-Adresse {} Punkt {} Punkt {} Punkt {} .".format(ip_out[0], ip_out[1], ip_out[2], ip_out[3])
